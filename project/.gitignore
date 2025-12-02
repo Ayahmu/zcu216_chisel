@@ -1,0 +1,28 @@
+# 忽略 Vivado 工程文件夹 (通常包含日志、比特流、临时文件)
+work/
+*.xpr
+*.data
+*.gen
+*.cache
+*.hw
+*.ip_user_files
+*.runs
+*.sim
+*.srcs
+*.str
+
+# 忽略日志和报告
+*.log
+*.jou
+*.dcp
+*.bit
+*.bin
+*.hdf
+*.xsa
+
+# 保留我们自己的文件夹
+!src/
+!xdc/
+!ip/
+!bd/
+!scripts/
