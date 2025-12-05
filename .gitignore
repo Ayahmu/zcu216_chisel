@@ -3,6 +3,8 @@
 /.bloop
 /.metals
 /.vscode
+/project/work/*
 config.json
 gen/*
 !gen/.gitkeep 
+*.tmp

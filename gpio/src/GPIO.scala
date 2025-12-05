@@ -15,7 +15,7 @@ class AXIL_GPIO
 
 class AXIGPIO(
     GPIO_WIDTH: Int = 2,
-    IP_INSTANCE_NAME: String = "axi_gpio_spi_mux"
+    IP_INSTANCE_NAME: String = "AXIGPIOBlackBox"
 ) extends Module {
 
   val io = IO(new Bundle {

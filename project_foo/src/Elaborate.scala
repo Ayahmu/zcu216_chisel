@@ -5,6 +5,7 @@ import chisel3.stage.{ChiselGeneratorAnnotation, ChiselStage}
 import firrtl.options.TargetDirAnnotation
 import gpio._
 import led._
+import memory._
 
 object elaborate extends App {
   println("Generating a %s class".format(args(0)))
@@ -25,6 +26,11 @@ object elaborate extends App {
         arr,
         Seq(ChiselGeneratorAnnotation(() => new LED()), dir)
       )
+	case "BRAM" =>
+	  stage.execute(
+		arr,
+		Seq(ChiselGeneratorAnnotation(() => new AXIBRAM()), dir)
+	  )
     case _ => println("Module match failed!")
   }
 }
