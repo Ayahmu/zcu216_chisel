@@ -24,8 +24,11 @@ module Top (
     output [0:0] LED0,
     output [0:0] LED1,
     output [1:0] clk104_clk_spi_mux_sel_tri_o,
-    output [0:0] trigger_out,
-
+    
+    output [0:0] trigger_out_sma,
+    output [0:0] trigger_out_loop,
+    input  [0:0] trigger_in,
+    
     input  adc2_clk_clk_n,
     input  adc2_clk_clk_p,
     input  dac2_clk_clk_n,
@@ -41,7 +44,25 @@ module Top (
     output vout22_v_n,
     output vout22_v_p,
     output vout30_v_n,
-    output vout30_v_p
+    output vout30_v_p,
+    
+    input           c0_sys_clk_n,
+    input           c0_sys_clk_p,
+    output          c0_ddr4_act_n,
+    output [16:0]   c0_ddr4_adr,     
+    output [1:0]    c0_ddr4_ba,      
+    output [1:0]    c0_ddr4_bg,      
+    output [0:0]    c0_ddr4_ck_c,    
+    output [0:0]    c0_ddr4_ck_t,
+    output [0:0]    c0_ddr4_cke,     
+    output [1:0]    c0_ddr4_cs_n,    
+    inout  [3:0]    c0_ddr4_dm_n,    
+    inout  [31:0]   c0_ddr4_dq,      
+    inout  [3:0]    c0_ddr4_dqs_c,   
+    inout  [3:0]    c0_ddr4_dqs_t,
+    output [0:0]    c0_ddr4_odt,     
+    output          c0_ddr4_reset_n  
+    
 );
 
   wire        pl_clk;
@@ -49,6 +70,8 @@ module Top (
   wire        clk_adc2;
   wire        clk_dac2;
   wire        clk104_aresetn;
+  
+  wire trigger_internal_sig;
   
   wire [31:0] S_AXIS_30_tdata;
   wire        S_AXIS_30_tready;
@@ -112,47 +135,8 @@ module Top (
   wire [ 3:0] M_AXI_GPIO_wstrb;
   wire        M_AXI_GPIO_wvalid;
 
-  wire [31:0] M_AXI_BRAM_araddr;
-  wire [ 1:0] M_AXI_BRAM_arburst;
-  wire [ 3:0] M_AXI_BRAM_arcache;
-  wire [ 7:0] M_AXI_BRAM_arlen;
-  wire [ 0:0] M_AXI_BRAM_arlock;
-  wire [ 2:0] M_AXI_BRAM_arprot;
-  wire [ 3:0] M_AXI_BRAM_arqos;
-  wire        M_AXI_BRAM_arready;
-  wire [ 2:0] M_AXI_BRAM_arsize;
-  wire [15:0] M_AXI_BRAM_aruser;
-  wire        M_AXI_BRAM_arvalid;
-  wire [31:0] M_AXI_BRAM_awaddr;
-  wire [ 1:0] M_AXI_BRAM_awburst;
-  wire [ 3:0] M_AXI_BRAM_awcache;
-  wire [ 7:0] M_AXI_BRAM_awlen;
-  wire [ 0:0] M_AXI_BRAM_awlock;
-  wire [ 2:0] M_AXI_BRAM_awprot;
-  wire [ 3:0] M_AXI_BRAM_awqos;
-  wire        M_AXI_BRAM_awready;
-  wire [ 2:0] M_AXI_BRAM_awsize;
-  wire [15:0] M_AXI_BRAM_awuser;
-  wire        M_AXI_BRAM_awvalid;
-  wire        M_AXI_BRAM_bready;
-  wire [ 1:0] M_AXI_BRAM_bresp;
-  wire        M_AXI_BRAM_bvalid;
-  wire [31:0] M_AXI_BRAM_rdata;
-  wire        M_AXI_BRAM_rlast;
-  wire        M_AXI_BRAM_rready;
-  wire [ 1:0] M_AXI_BRAM_rresp;
-  wire        M_AXI_BRAM_rvalid;
-  wire [31:0] M_AXI_BRAM_wdata;
-  wire        M_AXI_BRAM_wlast;
-  wire        M_AXI_BRAM_wready;
-  wire [ 3:0] M_AXI_BRAM_wstrb;
-  wire        M_AXI_BRAM_wvalid;
-
   axis_axis_trigger_start #(
-      .DATA_WIDTH(32),
-      .TRIG_DATA_WIDTH(32),
-      .SAMPLE_WIDTH(16),
-      .THRESHOLD(5000)
+      .DATA_WIDTH(32)
   ) trigger_inst (
       .aclk(clk_dac2),
       .aresetn(clk104_aresetn),
@@ -166,9 +150,7 @@ module Top (
       .m_data_tvalid(trig_out_tvalid),
       .m_data_tready(trig_out_tready),
 
-      .s_trig_tdata (M_AXIS_30_tdata),
-      .s_trig_tvalid(M_AXIS_30_tvalid),
-      .s_trig_tready(M_AXIS_30_tready)
+      .trigger_in(trigger_in) 
   );
 
   axis_splitter_32to16x2 splitter_inst (
@@ -215,6 +197,23 @@ module Top (
       .vout30_v_n(vout30_v_n),
       .vout30_v_p(vout30_v_p),
 
+      .c0_sys_clk_n(c0_sys_clk_n),
+      .c0_sys_clk_p(c0_sys_clk_p),
+      .c0_ddr4_act_n (c0_ddr4_act_n),
+      .c0_ddr4_adr   (c0_ddr4_adr),
+      .c0_ddr4_ba    (c0_ddr4_ba),
+      .c0_ddr4_bg    (c0_ddr4_bg),
+      .c0_ddr4_ck_c  (c0_ddr4_ck_c),
+      .c0_ddr4_ck_t  (c0_ddr4_ck_t),
+      .c0_ddr4_cke   (c0_ddr4_cke),
+      .c0_ddr4_cs_n  (c0_ddr4_cs_n),
+      .c0_ddr4_dm_n  (c0_ddr4_dm_n),
+      .c0_ddr4_dq    (c0_ddr4_dq),
+      .c0_ddr4_dqs_c (c0_ddr4_dqs_c),
+      .c0_ddr4_dqs_t (c0_ddr4_dqs_t),
+      .c0_ddr4_odt   (c0_ddr4_odt),
+      .c0_ddr4_reset_n (c0_ddr4_reset_n),
+      
       .M_AXIS_RF_tdata (M_AXIS_RF_tdata),
       .M_AXIS_RF_tvalid(M_AXIS_RF_tvalid),
       .M_AXIS_RF_tready(M_AXIS_RF_tready),
@@ -271,43 +270,7 @@ module Top (
       .M_AXI_GPIO_wlast  (M_AXI_GPIO_wlast),
       .M_AXI_GPIO_wready (M_AXI_GPIO_wready),
       .M_AXI_GPIO_wstrb  (M_AXI_GPIO_wstrb),
-      .M_AXI_GPIO_wvalid (M_AXI_GPIO_wvalid),
-
-      .M_AXI_BRAM_araddr (M_AXI_BRAM_araddr),
-      .M_AXI_BRAM_arburst(M_AXI_BRAM_arburst),
-      .M_AXI_BRAM_arcache(M_AXI_BRAM_arcache),
-      .M_AXI_BRAM_arlen  (M_AXI_BRAM_arlen),
-      .M_AXI_BRAM_arlock (M_AXI_BRAM_arlock),
-      .M_AXI_BRAM_arprot (M_AXI_BRAM_arprot),
-      .M_AXI_BRAM_arqos  (M_AXI_BRAM_arqos),
-      .M_AXI_BRAM_arready(M_AXI_BRAM_arready),
-      .M_AXI_BRAM_arsize (M_AXI_BRAM_arsize),
-      .M_AXI_BRAM_aruser (M_AXI_BRAM_aruser),
-      .M_AXI_BRAM_arvalid(M_AXI_BRAM_arvalid),
-      .M_AXI_BRAM_awaddr (M_AXI_BRAM_awaddr),
-      .M_AXI_BRAM_awburst(M_AXI_BRAM_awburst),
-      .M_AXI_BRAM_awcache(M_AXI_BRAM_awcache),
-      .M_AXI_BRAM_awlen  (M_AXI_BRAM_awlen),
-      .M_AXI_BRAM_awlock (M_AXI_BRAM_awlock),
-      .M_AXI_BRAM_awprot (M_AXI_BRAM_awprot),
-      .M_AXI_BRAM_awqos  (M_AXI_BRAM_awqos),
-      .M_AXI_BRAM_awready(M_AXI_BRAM_awready),
-      .M_AXI_BRAM_awsize (M_AXI_BRAM_awsize),
-      .M_AXI_BRAM_awuser (M_AXI_BRAM_awuser),
-      .M_AXI_BRAM_awvalid(M_AXI_BRAM_awvalid),
-      .M_AXI_BRAM_bready (M_AXI_BRAM_bready),
-      .M_AXI_BRAM_bresp  (M_AXI_BRAM_bresp),
-      .M_AXI_BRAM_bvalid (M_AXI_BRAM_bvalid),
-      .M_AXI_BRAM_rdata  (M_AXI_BRAM_rdata),
-      .M_AXI_BRAM_rlast  (M_AXI_BRAM_rlast),
-      .M_AXI_BRAM_rready (M_AXI_BRAM_rready),
-      .M_AXI_BRAM_rresp  (M_AXI_BRAM_rresp),
-      .M_AXI_BRAM_rvalid (M_AXI_BRAM_rvalid),
-      .M_AXI_BRAM_wdata  (M_AXI_BRAM_wdata),
-      .M_AXI_BRAM_wlast  (M_AXI_BRAM_wlast),
-      .M_AXI_BRAM_wready (M_AXI_BRAM_wready),
-      .M_AXI_BRAM_wstrb  (M_AXI_BRAM_wstrb),
-      .M_AXI_BRAM_wvalid (M_AXI_BRAM_wvalid)
+      .M_AXI_GPIO_wvalid (M_AXI_GPIO_wvalid)
   );
 
   AXIGPIO axigpio_i (
@@ -362,59 +325,33 @@ module Top (
       .io_LED1(LED1)
   );
 
-  AXIBRAM axi_bram_i (
-      .clock((clk_dac2)),
-      .reset(~clk104_aresetn),
+  reg dma_valid_d;
+ 
+  always @(posedge clk_dac2) begin
+      dma_valid_d <= M_AXIS_RF_tvalid;
+  end
 
-      .io_axi_aw_ready(M_AXI_BRAM_awready),
-      .io_axi_aw_valid(M_AXI_BRAM_awvalid),
-      .io_axi_aw_bits_addr(M_AXI_BRAM_awaddr[12:0]),
-      .io_axi_aw_bits_burst(M_AXI_BRAM_awburst),
-      .io_axi_aw_bits_cache(M_AXI_BRAM_awcache),
-      .io_axi_aw_bits_len(M_AXI_BRAM_awlen),
-      .io_axi_aw_bits_lock(M_AXI_BRAM_awlock),
-      .io_axi_aw_bits_prot(M_AXI_BRAM_awprot),
-      .io_axi_aw_bits_qos(M_AXI_BRAM_awqos),
-      .io_axi_aw_bits_region(4'b0000),
-      .io_axi_aw_bits_size(M_AXI_BRAM_awsize),
+  assign trigger_internal_sig = M_AXIS_RF_tvalid & (~dma_valid_d);
 
-      .io_axi_ar_ready(M_AXI_BRAM_arready),
-      .io_axi_ar_valid(M_AXI_BRAM_arvalid),
-      .io_axi_ar_bits_addr(M_AXI_BRAM_araddr[12:0]),
-      .io_axi_ar_bits_burst(M_AXI_BRAM_arburst),
-      .io_axi_ar_bits_cache(M_AXI_BRAM_arcache),
-      .io_axi_ar_bits_len(M_AXI_BRAM_arlen),
-      .io_axi_ar_bits_lock(M_AXI_BRAM_arlock),
-      .io_axi_ar_bits_prot(M_AXI_BRAM_arprot),
-      .io_axi_ar_bits_qos(M_AXI_BRAM_arqos),
-      .io_axi_ar_bits_region(4'b0000),
-      .io_axi_ar_bits_size(M_AXI_BRAM_arsize),
+//  AXIS_PULSE_GEN axis_pulse_gen_i (
+//       .aclk(clk_dac2),          
+//       .aresetn(clk104_aresetn),
+//       .trigger_out(trigger_internal_sig)
+//   ); 
 
-      .io_axi_w_ready(M_AXI_BRAM_wready),
-      .io_axi_w_valid(M_AXI_BRAM_wvalid),
-      .io_axi_w_bits_data(M_AXI_BRAM_wdata),
-      .io_axi_w_bits_last(M_AXI_BRAM_wlast),
-      .io_axi_w_bits_strb(M_AXI_BRAM_wstrb),
+  assign trigger_out_sma  = trigger_internal_sig;
+  assign trigger_out_loop = trigger_internal_sig;
 
-      .io_axi_r_ready(M_AXI_BRAM_rready),
-      .io_axi_r_valid(M_AXI_BRAM_rvalid),
-      .io_axi_r_bits_data(M_AXI_BRAM_rdata),
-      .io_axi_r_bits_last(M_AXI_BRAM_rlast),
-      .io_axi_r_bits_resp(M_AXI_BRAM_rresp),
+  ila_trig ila_inst (
+      .clk(clk_dac2), 
+      .probe0 (trigger_internal_sig),
+      .probe1 (trigger_in),
+      .probe2 (split_a_tdata), 
+      .probe3 (split_a_tvalid),
+      .probe4 (split_a_tready),
 
-      .io_axi_b_ready(M_AXI_BRAM_bready),
-      .io_axi_b_valid(M_AXI_BRAM_bvalid),
-      .io_axi_b_bits_resp(M_AXI_BRAM_bresp)
+      .probe5 (split_b_tdata), 
+      .probe6 (split_b_tvalid),
+      .probe7 (split_b_tready) 
   );
-
-  AXIS_PULSE_GEN axis_pulse_gen_i (
-       .aclk(clk_dac2),          
-       .aresetn(clk104_aresetn),        
-       .m_axis_tdata(S_AXIS_30_tdata),  
-       .m_axis_tvalid(S_AXIS_30_tvalid), 
-       .m_axis_tready(S_AXIS_30_tready), 
-       .m_axis_tlast(),  
-       .trigger_out(trigger_out)
-   ); 
-
 endmodule

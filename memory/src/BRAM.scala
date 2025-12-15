@@ -145,7 +145,7 @@ class AXIBRAM(
     var s4 = s"set_property -dict [list "
     s4 += s"CONFIG.Memory_Type {True_Dual_Port_RAM} "
     s4 += s"CONFIG.PRIM_type_to_Implement {BRAM} "
-    s4 += s"CONFIG.Enable_32bit_Address {true} " 
+    s4 += s"CONFIG.Enable_32bit_Address {true} "
     s4 += s"CONFIG.Use_Byte_Write_Enable {true} "
     s4 += s"CONFIG.Byte_Size {8} "
     s4 += s"CONFIG.Register_PortA_Output_of_Memory_Primitives {false} "

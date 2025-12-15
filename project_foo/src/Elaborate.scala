@@ -1,4 +1,5 @@
 package project_foo
+
 import chisel3._
 import chisel3.util._
 import chisel3.stage.{ChiselGeneratorAnnotation, ChiselStage}
@@ -26,11 +27,11 @@ object elaborate extends App {
         arr,
         Seq(ChiselGeneratorAnnotation(() => new LED()), dir)
       )
-	case "BRAM" =>
-	  stage.execute(
-		arr,
-		Seq(ChiselGeneratorAnnotation(() => new AXIBRAM()), dir)
-	  )
+    case "BRAM" =>
+      stage.execute(
+        arr,
+        Seq(ChiselGeneratorAnnotation(() => new AXIBRAM()), dir)
+      )
     case _ => println("Module match failed!")
   }
 }
