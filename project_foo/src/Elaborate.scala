@@ -4,9 +4,11 @@ import chisel3._
 import chisel3.util._
 import chisel3.stage.{ChiselGeneratorAnnotation, ChiselStage}
 import firrtl.options.TargetDirAnnotation
+import common.axi._
 import gpio._
 import led._
 import memory._
+import axidma._
 
 object elaborate extends App {
   println("Generating a %s class".format(args(0)))
@@ -31,6 +33,16 @@ object elaborate extends App {
       stage.execute(
         arr,
         Seq(ChiselGeneratorAnnotation(() => new AXIBRAM()), dir)
+      )
+    case "AXIDMA" =>
+      stage.execute(
+        arr,
+        Seq(ChiselGeneratorAnnotation(() => new AXIDMA()), dir)
+      )
+    case "AXISDataFIFO" =>
+      stage.execute(
+        arr,
+        Seq(ChiselGeneratorAnnotation(() => new AXISDataFIFO()), dir)
       )
     case _ => println("Module match failed!")
   }
