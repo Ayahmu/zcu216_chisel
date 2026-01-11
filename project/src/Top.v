@@ -32,7 +32,11 @@ module Top (
     input  adc2_clk_clk_n,
     input  adc2_clk_clk_p,
     input  dac2_clk_clk_n,
-    input  dac2_clk_clk_p,
+    input  dac2_clk_clk_p,    
+    input  adc3_clk_clk_n,
+    input  adc3_clk_clk_p,
+    input  dac3_clk_clk_n,
+    input  dac3_clk_clk_p,
     input  vin20_v_n,
     input  vin20_v_p,
     input  vin22_v_n,
@@ -84,15 +88,15 @@ module Top (
   wire        M_AXIS_30_tvalid;
   wire        M_AXIS_30_tready;
 
-  wire [31:0] trig_out_tdata;
-  wire        trig_out_tvalid;
-  wire        trig_out_tready;
+  wire [127:0] trig_out_tdata;
+  wire         trig_out_tvalid;
+  wire         trig_out_tready;
 
-  wire [15:0] split_a_tdata;
+  wire [63:0] split_a_tdata;
   wire        split_a_tvalid;
   wire        split_a_tready;
 
-  wire [15:0] split_b_tdata;
+  wire [63:0] split_b_tdata;
   wire        split_b_tvalid;
   wire        split_b_tready;
   
@@ -113,7 +117,7 @@ module Top (
   wire        M_AXI_DMA_rvalid;
   wire [31:0] M_AXI_DMA_wdata;
   wire        M_AXI_DMA_wready;
-  wire [3:0]  M_AXI_DMA_wstrb;
+  wire [3:0] M_AXI_DMA_wstrb;
   wire        M_AXI_DMA_wvalid;
   
   wire [63:0] S_AXI_01_araddr;
@@ -126,7 +130,7 @@ module Top (
   wire        S_AXI_01_arready;
   wire [2:0]  S_AXI_01_arsize;
   wire        S_AXI_01_arvalid;
-  wire [31:0] S_AXI_01_rdata;
+  wire [127:0] S_AXI_01_rdata;
   wire        S_AXI_01_rlast;
   wire        S_AXI_01_rready;
   wire [1:0]  S_AXI_01_rresp;
@@ -186,17 +190,17 @@ module Top (
   wire [ 3:0] M_AXI_GPIO_wstrb;
   wire        M_AXI_GPIO_wvalid;
 
-  wire [31:0] dma_axis_tdata;
-  wire [3:0]  dma_axis_tkeep;
-  wire        dma_axis_tlast;
-  wire        dma_axis_tvalid;
-  wire        dma_axis_tready;
+  wire [127:0] dma_axis_tdata;
+  wire [15:0]  dma_axis_tkeep;
+  wire         dma_axis_tlast;
+  wire         dma_axis_tvalid;
+  wire         dma_axis_tready;
 
-  wire [31:0] fifo_axis_tdata;
-  wire [3:0]  fifo_axis_tkeep;
-  wire        fifo_axis_tlast;
-  wire        fifo_axis_tvalid;
-  wire        fifo_axis_tready;
+  wire [127:0] fifo_axis_tdata;
+  wire [15:0]  fifo_axis_tkeep;
+  wire         fifo_axis_tlast;
+  wire         fifo_axis_tvalid;
+  wire         fifo_axis_tready;
 
   AXIDMA axidma_i (
       .clock                (pl_clk),
@@ -288,7 +292,7 @@ module Top (
   );
 
   axis_axis_trigger_start #(
-      .DATA_WIDTH(32)
+      .DATA_WIDTH(128)
   ) trigger_inst (
       .aclk(clk_dac2),
       .aresetn(clk104_aresetn),
@@ -305,7 +309,7 @@ module Top (
       .trigger_in(trigger_in) 
   );
 
-  axis_splitter_32to16x2 splitter_inst (
+  axis_splitter_128to64x2 splitter_inst (
       .aclk(clk_dac2),
       .aresetn(clk104_aresetn),
 
@@ -338,7 +342,11 @@ module Top (
       .adc2_clk_clk_n(adc2_clk_clk_n),
       .adc2_clk_clk_p(adc2_clk_clk_p),
       .dac2_clk_clk_n(dac2_clk_clk_n),
-      .dac2_clk_clk_p(dac2_clk_clk_p),
+      .dac2_clk_clk_p(dac2_clk_clk_p),      
+      .adc3_clk_clk_n(adc3_clk_clk_n),
+      .adc3_clk_clk_p(adc3_clk_clk_p),
+      .dac3_clk_clk_n(dac3_clk_clk_n),
+      .dac3_clk_clk_p(dac3_clk_clk_p),
       .vin20_v_n(vin20_v_n),
       .vin20_v_p(vin20_v_p),
       .vin22_v_n(vin22_v_n),

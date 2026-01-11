@@ -239,6 +239,7 @@ proc create_root_design { parentCell } {
 
   set S_AXIS_30 [ create_bd_intf_port -mode Slave -vlnv xilinx.com:interface:axis_rtl:1.0 S_AXIS_30 ]
   set_property -dict [ list \
+   CONFIG.FREQ_HZ {312500000} \
    CONFIG.HAS_TKEEP {0} \
    CONFIG.HAS_TLAST {1} \
    CONFIG.HAS_TREADY {1} \
@@ -251,9 +252,13 @@ proc create_root_design { parentCell } {
    ] $S_AXIS_30
 
   set M_AXIS_30 [ create_bd_intf_port -mode Master -vlnv xilinx.com:interface:axis_rtl:1.0 M_AXIS_30 ]
+  set_property -dict [ list \
+   CONFIG.FREQ_HZ {312500000} \
+   ] $M_AXIS_30
 
   set S_AXIS_20 [ create_bd_intf_port -mode Slave -vlnv xilinx.com:interface:axis_rtl:1.0 S_AXIS_20 ]
   set_property -dict [ list \
+   CONFIG.FREQ_HZ {312500000} \
    CONFIG.HAS_TKEEP {0} \
    CONFIG.HAS_TLAST {0} \
    CONFIG.HAS_TREADY {1} \
@@ -267,6 +272,7 @@ proc create_root_design { parentCell } {
 
   set S_AXIS_22 [ create_bd_intf_port -mode Slave -vlnv xilinx.com:interface:axis_rtl:1.0 S_AXIS_22 ]
   set_property -dict [ list \
+   CONFIG.FREQ_HZ {312500000} \
    CONFIG.HAS_TKEEP {0} \
    CONFIG.HAS_TLAST {0} \
    CONFIG.HAS_TREADY {1} \
@@ -342,8 +348,12 @@ proc create_root_design { parentCell } {
   set_property -dict [ list \
    CONFIG.ASSOCIATED_BUSIF {S_AXIS_30:M_AXIS_30:S_AXIS_20:S_AXIS_22} \
    CONFIG.ASSOCIATED_RESET {clk104_aresetn} \
+   CONFIG.FREQ_HZ {312500000} \
  ] $clk_dac2
   set clk_adc2 [ create_bd_port -dir O -type clk clk_adc2 ]
+  set_property -dict [ list \
+   CONFIG.FREQ_HZ {312500000} \
+ ] $clk_adc2
   set clk104_aresetn [ create_bd_port -dir O -from 0 -to 0 -type rst clk104_aresetn ]
   set ddr4_ui_clk [ create_bd_port -dir O -type clk ddr4_ui_clk ]
   set_property -dict [ list \
@@ -686,13 +696,13 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
   set usp_rf_data_converter_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:usp_rf_data_converter:2.6 usp_rf_data_converter_0 ]
   set_property -dict [list \
     CONFIG.ADC2_Clock_Dist {2} \
-    CONFIG.ADC2_Outclk_Freq {184.320} \
+    CONFIG.ADC2_Outclk_Freq {312.500} \
     CONFIG.ADC2_PLL_Enable {true} \
-    CONFIG.ADC2_Refclk_Freq {184.320} \
-    CONFIG.ADC2_Sampling_Rate {1.47456} \
+    CONFIG.ADC2_Refclk_Freq {250.000} \
+    CONFIG.ADC2_Sampling_Rate {2.5} \
     CONFIG.ADC3_Clock_Source {2} \
     CONFIG.ADC3_PLL_Enable {false} \
-    CONFIG.ADC3_Sampling_Rate {1.47456} \
+    CONFIG.ADC3_Sampling_Rate {2.5} \
     CONFIG.ADC_Coarse_Mixer_Freq20 {3} \
     CONFIG.ADC_Data_Width20 {1} \
     CONFIG.ADC_Data_Width22 {1} \
@@ -709,15 +719,15 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
     CONFIG.ADC_Slice22_Enable {true} \
     CONFIG.ADC_Slice30_Enable {true} \
     CONFIG.DAC2_Clock_Dist {2} \
-    CONFIG.DAC2_Outclk_Freq {184.320} \
+    CONFIG.DAC2_Outclk_Freq {312.500} \
     CONFIG.DAC2_PLL_Enable {true} \
-    CONFIG.DAC2_Refclk_Freq {184.320} \
-    CONFIG.DAC2_Sampling_Rate {1.47456} \
+    CONFIG.DAC2_Refclk_Freq {250.000} \
+    CONFIG.DAC2_Sampling_Rate {2.5} \
     CONFIG.DAC3_Clock_Source {6} \
-    CONFIG.DAC3_Outclk_Freq {184.320} \
+    CONFIG.DAC3_Outclk_Freq {312.500} \
     CONFIG.DAC3_PLL_Enable {false} \
-    CONFIG.DAC3_Refclk_Freq {1474.560} \
-    CONFIG.DAC3_Sampling_Rate {1.47456} \
+    CONFIG.DAC3_Refclk_Freq {2500.000} \
+    CONFIG.DAC3_Sampling_Rate {2.5} \
     CONFIG.DAC_Coarse_Mixer_Freq20 {3} \
     CONFIG.DAC_Data_Width20 {1} \
     CONFIG.DAC_Data_Width22 {1} \
@@ -730,6 +740,7 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
     CONFIG.DAC_Slice20_Enable {true} \
     CONFIG.DAC_Slice22_Enable {true} \
     CONFIG.DAC_Slice30_Enable {true} \
+    CONFIG.DAC_VOP_Mode {1} \
     CONFIG.RF_Analyzer {1} \
   ] $usp_rf_data_converter_0
 

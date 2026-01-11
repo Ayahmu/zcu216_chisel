@@ -78,7 +78,7 @@ class AXIDmaBB(
 
 class AXIDMA(
     ADDR_WIDTH: Int = 64,
-    DATA_WIDTH: Int = 32,
+    DATA_WIDTH: Int = 128,
     BURST_SIZE: Int = 256,
     IP_NAME: String = "axi_dma_0"
 ) extends Module {
@@ -99,8 +99,7 @@ class AXIDMA(
         val prot = UInt(3.W)
       })
       val r = Flipped(Decoupled(new Bundle {
-        val data =
-          UInt(DATA_WIDTH.W)
+        val data = UInt(DATA_WIDTH.W)
         val resp = UInt(2.W)
         val last = Bool()
       }))
@@ -125,6 +124,7 @@ class AXIDMA(
     propCmd += s"CONFIG.c_include_s2mm {0} "
     propCmd += s"CONFIG.c_include_sg {0} "
     propCmd += s"CONFIG.c_m_axis_mm2s_tdata_width {${DATA_WIDTH}} "
+    propCmd += s"CONFIG.c_m_axi_mm2s_data_width {${DATA_WIDTH}} "
     propCmd += s"CONFIG.c_mm2s_burst_size {${BURST_SIZE}} "
     propCmd += s"CONFIG.c_sg_length_width {26} "
     propCmd += s"CONFIG.c_prmry_is_aclk_async {1} "
