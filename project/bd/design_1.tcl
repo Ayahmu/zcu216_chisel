@@ -239,13 +239,13 @@ proc create_root_design { parentCell } {
 
   set S_AXIS_30 [ create_bd_intf_port -mode Slave -vlnv xilinx.com:interface:axis_rtl:1.0 S_AXIS_30 ]
   set_property -dict [ list \
-   CONFIG.FREQ_HZ {312500000} \
+   CONFIG.FREQ_HZ {144000000} \
    CONFIG.HAS_TKEEP {0} \
    CONFIG.HAS_TLAST {1} \
    CONFIG.HAS_TREADY {1} \
    CONFIG.HAS_TSTRB {0} \
    CONFIG.LAYERED_METADATA {undef} \
-   CONFIG.TDATA_NUM_BYTES {2} \
+   CONFIG.TDATA_NUM_BYTES {8} \
    CONFIG.TDEST_WIDTH {0} \
    CONFIG.TID_WIDTH {0} \
    CONFIG.TUSER_WIDTH {0} \
@@ -253,18 +253,18 @@ proc create_root_design { parentCell } {
 
   set M_AXIS_30 [ create_bd_intf_port -mode Master -vlnv xilinx.com:interface:axis_rtl:1.0 M_AXIS_30 ]
   set_property -dict [ list \
-   CONFIG.FREQ_HZ {312500000} \
+   CONFIG.FREQ_HZ {144000000} \
    ] $M_AXIS_30
 
   set S_AXIS_20 [ create_bd_intf_port -mode Slave -vlnv xilinx.com:interface:axis_rtl:1.0 S_AXIS_20 ]
   set_property -dict [ list \
-   CONFIG.FREQ_HZ {312500000} \
+   CONFIG.FREQ_HZ {144000000} \
    CONFIG.HAS_TKEEP {0} \
    CONFIG.HAS_TLAST {0} \
    CONFIG.HAS_TREADY {1} \
    CONFIG.HAS_TSTRB {0} \
    CONFIG.LAYERED_METADATA {undef} \
-   CONFIG.TDATA_NUM_BYTES {2} \
+   CONFIG.TDATA_NUM_BYTES {8} \
    CONFIG.TDEST_WIDTH {0} \
    CONFIG.TID_WIDTH {0} \
    CONFIG.TUSER_WIDTH {0} \
@@ -272,13 +272,13 @@ proc create_root_design { parentCell } {
 
   set S_AXIS_22 [ create_bd_intf_port -mode Slave -vlnv xilinx.com:interface:axis_rtl:1.0 S_AXIS_22 ]
   set_property -dict [ list \
-   CONFIG.FREQ_HZ {312500000} \
+   CONFIG.FREQ_HZ {144000000} \
    CONFIG.HAS_TKEEP {0} \
    CONFIG.HAS_TLAST {0} \
    CONFIG.HAS_TREADY {1} \
    CONFIG.HAS_TSTRB {0} \
    CONFIG.LAYERED_METADATA {undef} \
-   CONFIG.TDATA_NUM_BYTES {2} \
+   CONFIG.TDATA_NUM_BYTES {8} \
    CONFIG.TDEST_WIDTH {0} \
    CONFIG.TID_WIDTH {0} \
    CONFIG.TUSER_WIDTH {0} \
@@ -311,7 +311,7 @@ proc create_root_design { parentCell } {
    CONFIG.ARUSER_WIDTH {0} \
    CONFIG.AWUSER_WIDTH {0} \
    CONFIG.BUSER_WIDTH {0} \
-   CONFIG.DATA_WIDTH {32} \
+   CONFIG.DATA_WIDTH {128} \
    CONFIG.HAS_BRESP {1} \
    CONFIG.HAS_BURST {1} \
    CONFIG.HAS_CACHE {1} \
@@ -336,6 +336,16 @@ proc create_root_design { parentCell } {
    CONFIG.WUSER_WIDTH {0} \
    ] $S_AXI_01
 
+  set adc3_clk [ create_bd_intf_port -mode Slave -vlnv xilinx.com:interface:diff_clock_rtl:1.0 adc3_clk ]
+  set_property -dict [ list \
+   CONFIG.FREQ_HZ {184320000} \
+   ] $adc3_clk
+
+  set dac3_clk [ create_bd_intf_port -mode Slave -vlnv xilinx.com:interface:diff_clock_rtl:1.0 dac3_clk ]
+  set_property -dict [ list \
+   CONFIG.FREQ_HZ {184320000} \
+   ] $dac3_clk
+
 
   # Create ports
   set pl_clk [ create_bd_port -dir O -type clk pl_clk ]
@@ -348,11 +358,11 @@ proc create_root_design { parentCell } {
   set_property -dict [ list \
    CONFIG.ASSOCIATED_BUSIF {S_AXIS_30:M_AXIS_30:S_AXIS_20:S_AXIS_22} \
    CONFIG.ASSOCIATED_RESET {clk104_aresetn} \
-   CONFIG.FREQ_HZ {312500000} \
+   CONFIG.FREQ_HZ {144000000} \
  ] $clk_dac2
   set clk_adc2 [ create_bd_port -dir O -type clk clk_adc2 ]
   set_property -dict [ list \
-   CONFIG.FREQ_HZ {312500000} \
+   CONFIG.FREQ_HZ {138240000} \
  ] $clk_adc2
   set clk104_aresetn [ create_bd_port -dir O -from 0 -to 0 -type rst clk104_aresetn ]
   set ddr4_ui_clk [ create_bd_port -dir O -type clk ddr4_ui_clk ]
@@ -696,17 +706,18 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
   set usp_rf_data_converter_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:usp_rf_data_converter:2.6 usp_rf_data_converter_0 ]
   set_property -dict [list \
     CONFIG.ADC2_Clock_Dist {2} \
-    CONFIG.ADC2_Outclk_Freq {312.500} \
+    CONFIG.ADC2_Outclk_Freq {138.240} \
     CONFIG.ADC2_PLL_Enable {true} \
-    CONFIG.ADC2_Refclk_Freq {250.000} \
-    CONFIG.ADC2_Sampling_Rate {2.5} \
-    CONFIG.ADC3_Clock_Source {2} \
+    CONFIG.ADC2_Refclk_Freq {184.320} \
+    CONFIG.ADC2_Sampling_Rate {2.21184} \
+    CONFIG.ADC3_Clock_Source {3} \
+    CONFIG.ADC3_Outclk_Freq {138.240} \
     CONFIG.ADC3_PLL_Enable {false} \
-    CONFIG.ADC3_Sampling_Rate {2.5} \
+    CONFIG.ADC3_Sampling_Rate {2.21184} \
     CONFIG.ADC_Coarse_Mixer_Freq20 {3} \
-    CONFIG.ADC_Data_Width20 {1} \
-    CONFIG.ADC_Data_Width22 {1} \
-    CONFIG.ADC_Data_Width30 {1} \
+    CONFIG.ADC_Data_Width20 {2} \
+    CONFIG.ADC_Data_Width22 {2} \
+    CONFIG.ADC_Data_Width30 {2} \
     CONFIG.ADC_Decimation_Mode20 {8} \
     CONFIG.ADC_Decimation_Mode22 {8} \
     CONFIG.ADC_Decimation_Mode30 {8} \
@@ -719,19 +730,19 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
     CONFIG.ADC_Slice22_Enable {true} \
     CONFIG.ADC_Slice30_Enable {true} \
     CONFIG.DAC2_Clock_Dist {2} \
-    CONFIG.DAC2_Outclk_Freq {312.500} \
+    CONFIG.DAC2_Outclk_Freq {144.000} \
     CONFIG.DAC2_PLL_Enable {true} \
-    CONFIG.DAC2_Refclk_Freq {250.000} \
-    CONFIG.DAC2_Sampling_Rate {2.5} \
-    CONFIG.DAC3_Clock_Source {6} \
-    CONFIG.DAC3_Outclk_Freq {312.500} \
+    CONFIG.DAC2_Refclk_Freq {184.320} \
+    CONFIG.DAC2_Sampling_Rate {4.608} \
+    CONFIG.DAC3_Clock_Source {7} \
+    CONFIG.DAC3_Outclk_Freq {144.000} \
     CONFIG.DAC3_PLL_Enable {false} \
-    CONFIG.DAC3_Refclk_Freq {2500.000} \
-    CONFIG.DAC3_Sampling_Rate {2.5} \
+    CONFIG.DAC3_Refclk_Freq {4608.000} \
+    CONFIG.DAC3_Sampling_Rate {4.608} \
     CONFIG.DAC_Coarse_Mixer_Freq20 {3} \
-    CONFIG.DAC_Data_Width20 {1} \
-    CONFIG.DAC_Data_Width22 {1} \
-    CONFIG.DAC_Data_Width30 {1} \
+    CONFIG.DAC_Data_Width20 {4} \
+    CONFIG.DAC_Data_Width22 {4} \
+    CONFIG.DAC_Data_Width30 {4} \
     CONFIG.DAC_Interpolation_Mode20 {8} \
     CONFIG.DAC_Interpolation_Mode22 {8} \
     CONFIG.DAC_Interpolation_Mode30 {8} \
@@ -835,7 +846,9 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
   # Create interface connections
   connect_bd_intf_net -intf_net S01_AXI_0_1 [get_bd_intf_ports S_AXI_01] [get_bd_intf_pins smartconnect_2/S01_AXI]
   connect_bd_intf_net -intf_net adc2_clk_1 [get_bd_intf_ports adc2_clk] [get_bd_intf_pins usp_rf_data_converter_0/adc2_clk]
+  connect_bd_intf_net -intf_net adc3_clk_0_1 [get_bd_intf_ports adc3_clk] [get_bd_intf_pins usp_rf_data_converter_0/adc3_clk]
   connect_bd_intf_net -intf_net dac2_clk_1 [get_bd_intf_ports dac2_clk] [get_bd_intf_pins usp_rf_data_converter_0/dac2_clk]
+  connect_bd_intf_net -intf_net dac3_clk_0_1 [get_bd_intf_ports dac3_clk] [get_bd_intf_pins usp_rf_data_converter_0/dac3_clk]
   connect_bd_intf_net -intf_net ddr4_0_C0_DDR4 [get_bd_intf_ports c0_ddr4] [get_bd_intf_pins ddr4_0/C0_DDR4]
   connect_bd_intf_net -intf_net default_sysclk_c0_300mhz_1 [get_bd_intf_ports c0_sys] [get_bd_intf_pins ddr4_0/C0_SYS_CLK]
   connect_bd_intf_net -intf_net s20_axis_0_1 [get_bd_intf_ports S_AXIS_20] [get_bd_intf_pins usp_rf_data_converter_0/s20_axis]
